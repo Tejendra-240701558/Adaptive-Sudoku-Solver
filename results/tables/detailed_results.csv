@@ -1,0 +1,33 @@
+puzzle,empty_cells,solver,solved,solving_time_seconds,search_nodes,backtracks,conflicts,cells_solved,candidate_reductions,strategy_switches
+puzzle_1,20,Constraint Propagation,True,0.00036289996933192015,0,0,0,20,0,0
+puzzle_1,20,MRV + Backtracking,True,0.0031841000309213996,20,0,0,20,0,0
+puzzle_1,20,Min-Conflicts,False,0.6146806000033394,1000,0,2129,0,0,0
+puzzle_1,20,Adaptive,True,0.005333399982191622,0,0,0,20,0,0
+puzzle_2,30,Constraint Propagation,True,0.0008892000187188387,0,0,0,30,0,0
+puzzle_2,30,MRV + Backtracking,True,0.01190149993635714,30,0,0,30,0,0
+puzzle_2,30,Min-Conflicts,False,0.7198602999560535,1000,0,10601,0,0,0
+puzzle_2,30,Adaptive,True,0.003112299949862063,0,0,0,30,0,0
+puzzle_3,40,Constraint Propagation,True,0.0022754999808967113,0,0,0,40,0,0
+puzzle_3,40,MRV + Backtracking,True,0.0246908999979496,40,0,0,40,0,0
+puzzle_3,40,Min-Conflicts,False,0.5654403000371531,1000,0,9457,0,0,0
+puzzle_3,40,Adaptive,True,0.008741899975575507,40,0,0,40,0,0
+puzzle_4,50,Constraint Propagation,False,0.0012196999741718173,0,0,0,1,0,0
+puzzle_4,50,MRV + Backtracking,True,0.01597319997381419,50,0,0,50,0,0
+puzzle_4,50,Min-Conflicts,False,0.587648699991405,1000,0,21049,0,0,0
+puzzle_4,50,Adaptive,True,0.017869899980723858,50,0,0,50,0,0
+puzzle_5,55,Constraint Propagation,False,0.0005797999911010265,0,0,0,0,0,0
+puzzle_5,55,MRV + Backtracking,True,0.022161099943332374,55,0,0,55,0,0
+puzzle_5,55,Min-Conflicts,False,0.63858040003106,1000,0,18034,0,0,0
+puzzle_5,55,Adaptive,True,0.018951699952594936,55,0,0,55,0,0
+puzzle_6,60,Constraint Propagation,False,0.00035909994039684534,0,0,0,0,0,0
+puzzle_6,60,MRV + Backtracking,True,0.023775900015607476,79,19,0,60,0,0
+puzzle_6,60,Min-Conflicts,False,0.6680828999960795,1000,0,20581,0,0,0
+puzzle_6,60,Adaptive,True,0.023318200022913516,79,19,0,60,0,0
+puzzle_7,65,Constraint Propagation,False,0.0006252999883145094,0,0,0,0,0,0
+puzzle_7,65,MRV + Backtracking,True,0.02246250002644956,65,0,0,65,0,0
+puzzle_7,65,Min-Conflicts,False,0.7490429000463337,1000,0,21620,0,0,0
+puzzle_7,65,Adaptive,True,0.11403759999666363,165,0,4614,65,0,2
+puzzle_8,50,Constraint Propagation,False,0.0021106000058352947,0,0,0,11,0,0
+puzzle_8,50,MRV + Backtracking,True,0.01642809994518757,50,0,0,50,0,0
+puzzle_8,50,Min-Conflicts,False,0.6331845000386238,1000,0,20614,0,0,0
+puzzle_8,50,Adaptive,True,0.02759660000447184,50,0,0,50,0,0

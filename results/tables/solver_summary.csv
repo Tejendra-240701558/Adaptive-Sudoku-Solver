@@ -1,0 +1,5 @@
+solver,solved,success_rate_percent,average_solving_time_seconds,average_search_nodes,average_backtracks,average_strategy_switches
+Constraint Propagation,3/8,37.5,0.001053,0.00,0.00,0.00
+MRV + Backtracking,8/8,100.0,0.017572,48.62,2.38,0.00
+Min-Conflicts,0/8,0.0,0.647065,1000.00,0.00,0.00
+Adaptive,8/8,100.0,0.027370,54.88,2.38,0.25
