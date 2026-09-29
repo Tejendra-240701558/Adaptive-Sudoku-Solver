@@ -1,0 +1,1 @@
+"""Sudoku input validation."""
