@@ -82,7 +82,13 @@ def _get_conflicted_cells(sudoku, mutable_cells):
     return conflicted
 
 
-def solve(sudoku, max_steps=100000, seed=42, max_restarts=10):
+def solve(
+    sudoku,
+    max_steps=100000,
+    seed=42,
+    max_restarts=10,
+    metrics=None,
+):
     """
     Solve Sudoku using the Min-Conflicts local-search algorithm.
 
@@ -100,6 +106,9 @@ def solve(sudoku, max_steps=100000, seed=42, max_restarts=10):
     max_restarts : int
         Number of random restarts allowed.
 
+    metrics : SolverMetrics, optional
+        Performance metrics object used to record solver activity.
+
     Returns
     -------
     bool
@@ -116,6 +125,7 @@ def solve(sudoku, max_steps=100000, seed=42, max_restarts=10):
     rng = random.Random(seed)
 
     for _ in range(max_restarts):
+
         # Restore the original puzzle before each restart.
         sudoku.grid = [
             row.copy()
@@ -126,6 +136,11 @@ def solve(sudoku, max_steps=100000, seed=42, max_restarts=10):
         _initialize_grid(sudoku, rng)
 
         for _ in range(max_steps):
+
+            # Record one local-search step.
+            if metrics is not None:
+                metrics.record_search_node()
+
             conflicted_cells = _get_conflicted_cells(
                 sudoku,
                 mutable_cells
@@ -133,7 +148,16 @@ def solve(sudoku, max_steps=100000, seed=42, max_restarts=10):
 
             # No conflicts means the Sudoku is solved.
             if not conflicted_cells:
+                if metrics is not None:
+                    for _ in mutable_cells:
+                        metrics.record_cell_solved()
+
                 return True
+
+            # Record the number of currently conflicted cells.
+            if metrics is not None:
+                for _ in conflicted_cells:
+                    metrics.record_conflict()
 
             # Choose one conflicted cell randomly.
             row, col = rng.choice(conflicted_cells)
@@ -142,6 +166,7 @@ def solve(sudoku, max_steps=100000, seed=42, max_restarts=10):
             conflict_values = []
 
             for value in range(1, Sudoku.SIZE + 1):
+
                 conflicts = _conflict_count(
                     sudoku,
                     row,
@@ -166,6 +191,7 @@ def solve(sudoku, max_steps=100000, seed=42, max_restarts=10):
             ]
 
             value = rng.choice(best_values)
+
             sudoku.set(row, col, value)
 
     # Restore the original puzzle if no solution was found.

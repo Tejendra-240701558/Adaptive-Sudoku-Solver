@@ -8,12 +8,12 @@ from src.strategy_switcher import (
 
 def test_select_constraint_propagation():
     profile = {
-        "empty_cells": 45,
-        "forced_moves": 5,
+        "empty_cells": 40,
+        "forced_moves": 15,
         "total_candidates": 100,
-        "average_candidates": 2.2,
-        "maximum_candidates": 4,
-        "highly_constrained_cells": 10,
+        "average_candidates": 2.5,
+        "maximum_candidates": 5,
+        "highly_constrained_cells": 20,
     }
 
     strategy = select_strategy(profile)
@@ -24,11 +24,11 @@ def test_select_constraint_propagation():
 def test_select_mrv_backtracking():
     profile = {
         "empty_cells": 30,
-        "forced_moves": 0,
+        "forced_moves": 5,
         "total_candidates": 75,
         "average_candidates": 2.5,
         "maximum_candidates": 4,
-        "highly_constrained_cells": 0,
+        "highly_constrained_cells": 12,
     }
 
     strategy = select_strategy(profile)
@@ -43,7 +43,7 @@ def test_select_min_conflicts():
         "total_candidates": 200,
         "average_candidates": 4.0,
         "maximum_candidates": 7,
-        "highly_constrained_cells": 0,
+        "highly_constrained_cells": 5,
     }
 
     strategy = select_strategy(profile)
@@ -54,11 +54,11 @@ def test_select_min_conflicts():
 def test_default_strategy():
     profile = {
         "empty_cells": 20,
-        "forced_moves": 0,
+        "forced_moves": 2,
         "total_candidates": 70,
         "average_candidates": 3.5,
         "maximum_candidates": 5,
-        "highly_constrained_cells": 0,
+        "highly_constrained_cells": 5,
     }
 
     strategy = select_strategy(profile)

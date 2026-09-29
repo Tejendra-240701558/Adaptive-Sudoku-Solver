@@ -17,6 +17,9 @@ def select_strategy(profile):
     """
     Select an initial Sudoku-solving strategy.
 
+    Strategy selection is based on measurable characteristics
+    of the current Sudoku state.
+
     Parameters
     ----------
     profile : dict
@@ -33,23 +36,42 @@ def select_strategy(profile):
     average_candidates = profile["average_candidates"]
     highly_constrained_cells = profile["highly_constrained_cells"]
 
-    # If many cells have forced values, constraint propagation
-    # is a suitable first strategy.
-    if forced_moves > 0 or highly_constrained_cells > 0:
+    # Calculate the proportion of empty cells that currently
+    # have exactly one possible value.
+    if empty_cells > 0:
+        forced_move_ratio = forced_moves / empty_cells
+    else:
+        forced_move_ratio = 0.0
+
+    # Strong propagation opportunity.
+    #
+    # A relatively high proportion of forced moves indicates
+    # that direct constraint propagation can make meaningful
+    # progress without search.
+    if forced_move_ratio >= 0.30:
         return CONSTRAINT_PROPAGATION
 
-    # If the puzzle has relatively few candidates per cell,
-    # MRV-based backtracking is a suitable systematic strategy.
-    if average_candidates <= 3.0:
+    # Highly constrained search space.
+    #
+    # A low average candidate count indicates that selecting
+    # the most constrained variable is appropriate.
+    if average_candidates <= 2.5:
         return MRV_BACKTRACKING
 
-    # Larger and less constrained search spaces are candidates
-    # for local-search exploration.
+    # Large and relatively unconstrained search space.
+    #
+    # Local search becomes a candidate when many cells remain
+    # and the average number of candidates is relatively high.
     if empty_cells >= 40 and average_candidates > 3.0:
         return MIN_CONFLICTS
 
-    # Default to MRV-based backtracking when no stronger
-    # characteristic determines the strategy.
+    # If a substantial number of cells are highly constrained,
+    # MRV is preferred for systematic search.
+    if highly_constrained_cells >= 0.40 * empty_cells:
+        return MRV_BACKTRACKING
+
+    # Default to MRV-based backtracking because it provides
+    # systematic and complete search.
     return MRV_BACKTRACKING
 
 
@@ -81,7 +103,6 @@ def switch_strategy(current_strategy, attempted_strategies):
         MIN_CONFLICTS,
     ]
 
-    # Try strategies in the defined order.
     for strategy in strategy_order:
 
         if strategy == current_strategy:
@@ -90,5 +111,4 @@ def switch_strategy(current_strategy, attempted_strategies):
         if strategy not in attempted_strategies:
             return strategy
 
-    # No unused strategy remains.
     return None

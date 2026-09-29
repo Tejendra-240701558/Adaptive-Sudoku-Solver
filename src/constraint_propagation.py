@@ -8,7 +8,7 @@ possible candidate.
 from src.candidates import get_candidates
 
 
-def propagate(sudoku):
+def propagate(sudoku, metrics=None):
     """
     Apply constraint propagation using naked singles.
 
@@ -19,6 +19,9 @@ def propagate(sudoku):
     ----------
     sudoku : Sudoku
         Sudoku puzzle to solve.
+
+    metrics : SolverMetrics, optional
+        Performance metrics object used to record solver activity.
 
     Returns
     -------
@@ -43,6 +46,10 @@ def propagate(sudoku):
             if len(candidates) == 1:
                 value = next(iter(candidates))
                 sudoku.set(row, col, value)
+
+                if metrics is not None:
+                    metrics.record_cell_solved()
+
                 progress = True
 
     return True
