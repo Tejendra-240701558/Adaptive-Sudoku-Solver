@@ -5,7 +5,7 @@ This module provides a common structure for recording
 and reporting solver performance.
 """
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from time import perf_counter
 
 
@@ -20,6 +20,7 @@ class SolverMetrics:
     cells_solved: int = 0
     candidate_reductions: int = 0
     strategy_switches: int = 0
+    strategy_history: list[str] = field(default_factory=list)
 
     def start_timer(self):
         """Start the performance timer."""
@@ -53,6 +54,21 @@ class SolverMetrics:
     def record_strategy_switch(self):
         """Record one strategy switch."""
         self.strategy_switches += 1
+
+    def record_strategy(self, strategy):
+        """
+        Record a strategy used by the adaptive solver.
+
+        Duplicate consecutive strategy entries are ignored so
+        that the history represents actual strategy changes.
+        """
+
+        if not self.strategy_history:
+            self.strategy_history.append(strategy)
+            return
+
+        if self.strategy_history[-1] != strategy:
+            self.strategy_history.append(strategy)
 
     def to_dict(self):
         """Return the metrics as a dictionary."""

@@ -84,19 +84,6 @@ def _has_sufficient_progress(before, after):
 
     Progress is measured by comparing the number of empty
     cells before and after the strategy execution.
-
-    Parameters
-    ----------
-    before : int
-        Number of empty cells before the strategy.
-
-    after : int
-        Number of empty cells after the strategy.
-
-    Returns
-    -------
-    bool
-        True if the number of empty cells decreased.
     """
 
     return after < before
@@ -152,6 +139,12 @@ def solve(sudoku, metrics=None):
     while current_strategy is not None:
 
         attempted_strategies.add(current_strategy)
+
+        # Record the strategy being used.
+        if metrics is not None:
+            metrics.record_strategy(
+                current_strategy
+            )
 
         # Record the number of empty cells before solving.
         before_empty = sudoku.empty_count()

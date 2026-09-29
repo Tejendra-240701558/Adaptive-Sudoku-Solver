@@ -2,9 +2,9 @@
 Adaptive strategy selection and switching for Sudoku.
 
 This module selects an initial solving strategy based on
-the computational characteristics of a Sudoku puzzle and
-selects alternative strategies when the current strategy
-does not make sufficient progress.
+measurable puzzle characteristics and selects alternative
+strategies when the current strategy does not make sufficient
+progress.
 """
 
 
@@ -17,8 +17,14 @@ def select_strategy(profile):
     """
     Select an initial Sudoku-solving strategy.
 
-    Strategy selection is based on measurable characteristics
-    of the current Sudoku state.
+    Strategy selection uses measurable characteristics of the
+    current Sudoku state.
+
+    Policy:
+    1. Use constraint propagation when many forced moves exist.
+    2. Use Min-Conflicts only for very large and broadly
+       unconstrained puzzles.
+    3. Otherwise use MRV-based backtracking.
 
     Parameters
     ----------
@@ -34,44 +40,30 @@ def select_strategy(profile):
     empty_cells = profile["empty_cells"]
     forced_moves = profile["forced_moves"]
     average_candidates = profile["average_candidates"]
-    highly_constrained_cells = profile["highly_constrained_cells"]
 
-    # Calculate the proportion of empty cells that currently
-    # have exactly one possible value.
     if empty_cells > 0:
-        forced_move_ratio = forced_moves / empty_cells
+        forced_move_ratio = (
+            forced_moves / empty_cells
+        )
     else:
         forced_move_ratio = 0.0
 
     # Strong propagation opportunity.
-    #
-    # A relatively high proportion of forced moves indicates
-    # that direct constraint propagation can make meaningful
-    # progress without search.
     if forced_move_ratio >= 0.30:
         return CONSTRAINT_PROPAGATION
 
-    # Highly constrained search space.
+    # Min-Conflicts is reserved for very large and broadly
+    # unconstrained search spaces.
     #
-    # A low average candidate count indicates that selecting
-    # the most constrained variable is appropriate.
-    if average_candidates <= 2.5:
-        return MRV_BACKTRACKING
-
-    # Large and relatively unconstrained search space.
-    #
-    # Local search becomes a candidate when many cells remain
-    # and the average number of candidates is relatively high.
-    if empty_cells >= 40 and average_candidates > 3.0:
+    # The stricter threshold prevents the adaptive controller
+    # from paying local-search overhead on ordinary puzzles.
+    if (
+        empty_cells >= 60
+        and average_candidates >= 5.0
+    ):
         return MIN_CONFLICTS
 
-    # If a substantial number of cells are highly constrained,
-    # MRV is preferred for systematic search.
-    if highly_constrained_cells >= 0.40 * empty_cells:
-        return MRV_BACKTRACKING
-
-    # Default to MRV-based backtracking because it provides
-    # systematic and complete search.
+    # Default systematic search strategy.
     return MRV_BACKTRACKING
 
 
@@ -79,6 +71,16 @@ def switch_strategy(current_strategy, attempted_strategies):
     """
     Select the next strategy when the current strategy
     does not make sufficient progress.
+
+    The switching order is:
+
+    Constraint Propagation
+        ↓
+    MRV + Backtracking
+        ↓
+    Min-Conflicts
+
+    A strategy that has already been attempted is skipped.
 
     Parameters
     ----------
