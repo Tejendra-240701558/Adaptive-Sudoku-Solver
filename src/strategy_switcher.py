@@ -1,8 +1,10 @@
 """
-Adaptive strategy selection for Sudoku.
+Adaptive strategy selection and switching for Sudoku.
 
 This module selects an initial solving strategy based on
-the computational characteristics of a Sudoku puzzle.
+the computational characteristics of a Sudoku puzzle and
+selects alternative strategies when the current strategy
+does not make sufficient progress.
 """
 
 
@@ -49,3 +51,44 @@ def select_strategy(profile):
     # Default to MRV-based backtracking when no stronger
     # characteristic determines the strategy.
     return MRV_BACKTRACKING
+
+
+def switch_strategy(current_strategy, attempted_strategies):
+    """
+    Select the next strategy when the current strategy
+    does not make sufficient progress.
+
+    Parameters
+    ----------
+    current_strategy : str
+        Strategy that was most recently used.
+
+    attempted_strategies : set
+        Strategies that have already been attempted.
+
+    Returns
+    -------
+    str or None
+        The next unused strategy.
+
+        Returns None when all available strategies
+        have already been attempted.
+    """
+
+    strategy_order = [
+        CONSTRAINT_PROPAGATION,
+        MRV_BACKTRACKING,
+        MIN_CONFLICTS,
+    ]
+
+    # Try strategies in the defined order.
+    for strategy in strategy_order:
+
+        if strategy == current_strategy:
+            continue
+
+        if strategy not in attempted_strategies:
+            return strategy
+
+    # No unused strategy remains.
+    return None
