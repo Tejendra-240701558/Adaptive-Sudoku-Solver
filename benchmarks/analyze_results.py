@@ -3,6 +3,9 @@ Analyze Sudoku benchmark results.
 
 This script reads the benchmark CSV file and produces
 summary statistics for each solving strategy.
+
+It also saves the summary statistics to:
+    results/performance_summary.csv
 """
 
 import csv
@@ -13,6 +16,11 @@ from pathlib import Path
 INPUT_FILE = Path(
     "benchmarks",
     "benchmark_results.csv",
+)
+
+OUTPUT_FILE = Path(
+    "results",
+    "performance_summary.csv",
 )
 
 
@@ -109,6 +117,76 @@ def calculate_summary(results):
     return summaries
 
 
+def save_summary_csv(summaries):
+    """Save solver summary statistics to a CSV file."""
+
+    OUTPUT_FILE.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    fieldnames = [
+        "solver",
+        "puzzles",
+        "solved",
+        "success_rate",
+        "average_time",
+        "average_search_nodes",
+        "average_backtracks",
+        "average_conflicts",
+        "average_cells_solved",
+        "average_strategy_switches",
+    ]
+
+    with OUTPUT_FILE.open(
+        "w",
+        newline="",
+        encoding="utf-8",
+    ) as file:
+
+        writer = csv.DictWriter(
+            file,
+            fieldnames=fieldnames,
+        )
+
+        writer.writeheader()
+
+        for summary in summaries:
+            writer.writerow(
+                {
+                    "solver": summary["solver"],
+                    "puzzles": summary["puzzles"],
+                    "solved": summary["solved"],
+                    "success_rate": (
+                        f"{summary['success_rate']:.2f}"
+                    ),
+                    "average_time": (
+                        f"{summary['average_time']:.6f}"
+                    ),
+                    "average_search_nodes": (
+                        f"{summary['average_search_nodes']:.2f}"
+                    ),
+                    "average_backtracks": (
+                        f"{summary['average_backtracks']:.2f}"
+                    ),
+                    "average_conflicts": (
+                        f"{summary['average_conflicts']:.2f}"
+                    ),
+                    "average_cells_solved": (
+                        f"{summary['average_cells_solved']:.2f}"
+                    ),
+                    "average_strategy_switches": (
+                        f"{summary['average_strategy_switches']:.2f}"
+                    ),
+                }
+            )
+
+    print()
+    print(
+        f"Performance summary saved to: {OUTPUT_FILE}"
+    )
+
+
 def print_summary(summaries):
     """Print a formatted solver comparison table."""
 
@@ -194,6 +272,7 @@ def main():
 
     print_summary(summaries)
     print_detailed_results(results)
+    save_summary_csv(summaries)
 
 
 if __name__ == "__main__":
