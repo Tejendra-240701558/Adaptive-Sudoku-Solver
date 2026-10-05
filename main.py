@@ -1,18 +1,23 @@
 ﻿"""
-Adaptive Sudoku Solver - Presentation Demo.
+Adaptive Sudoku Solver - Main Presentation Program.
 
-Runs the adaptive solver on benchmark Puzzle 7,
-which demonstrates strategy switching.
+Provides:
+1. Interactive user Sudoku solving
+2. Puzzle 7 adaptive strategy-switching demonstration
+3. Complete benchmark analysis
+4. Exit
 """
 
+from benchmarks.run_benchmark import run_benchmark_analysis
 from datasets.sudoku_benchmark import BENCHMARK_PUZZLES
 from src.adaptive_solver import solve
 from src.metrics import SolverMetrics
 from src.sudoku import Sudoku
+from src.user_interface import run_user_solver
 
 
 def print_grid(sudoku):
-    """Print Sudoku grid in a presentation-friendly format."""
+    """Print a Sudoku grid in a presentation-friendly format."""
 
     grid = getattr(sudoku, "grid", sudoku)
 
@@ -24,7 +29,9 @@ def print_grid(sudoku):
 
         for c, value in enumerate(row):
 
-            values.append(str(value) if value != 0 else ".")
+            values.append(
+                str(value) if value != 0 else "."
+            )
 
             if c in (2, 5):
                 values.append("|")
@@ -35,95 +42,207 @@ def print_grid(sudoku):
             print("+-------+-------+-------+")
 
 
-def main():
+def run_puzzle_7_demo():
+    """
+    Run the Puzzle 7 presentation demonstration.
 
-    # --------------------------------------------------------
-    # Select P7
-    # --------------------------------------------------------
+    Puzzle 7 is used because it demonstrates actual
+    adaptive strategy switching.
+    """
 
     puzzle_id = "puzzle_7"
 
     puzzle_data = BENCHMARK_PUZZLES[puzzle_id]
 
-    sudoku = Sudoku([row[:] for row in puzzle_data])
+    sudoku = Sudoku(
+        [row[:] for row in puzzle_data]
+    )
 
-    initial_empty = sum(row.count(0) for row in puzzle_data)
+    initial_empty = sum(
+        row.count(0)
+        for row in puzzle_data
+    )
 
-    # --------------------------------------------------------
-    # Header
-    # --------------------------------------------------------
-
+    print()
     print("=" * 72)
-    print("ADAPTIVE SUDOKU SOLVER - LIVE DEMONSTRATION")
+    print("             ADAPTIVE SUDOKU SOLVER - DEMONSTRATION")
     print("=" * 72)
 
-    print(f"Puzzle: {puzzle_id} ({initial_empty} empty cells)")
+    print(
+        f"Puzzle: {puzzle_id} "
+        f"({initial_empty} empty cells)"
+    )
 
-    # --------------------------------------------------------
-    # Initial puzzle
-    # --------------------------------------------------------
-
-    print("\nInitial Puzzle:")
+    print()
+    print("Initial Puzzle:")
     print_grid(sudoku)
-
-    # --------------------------------------------------------
-    # Run adaptive solver
-    # --------------------------------------------------------
 
     metrics = SolverMetrics()
 
-    solved = solve(sudoku, metrics)
+    metrics.start_timer()
 
-    # --------------------------------------------------------
-    # Results
-    # --------------------------------------------------------
+    solved = solve(
+        sudoku,
+        metrics=metrics,
+    )
 
-    print("\n" + "=" * 72)
-    print("ADAPTIVE SOLVING RESULT")
+    metrics.stop_timer()
+
+    print()
+    print("=" * 72)
+    print("                  ADAPTIVE SOLVING RESULT")
     print("=" * 72)
 
-    print(f"Status            : {'SOLVED' if solved else 'FAILED'}")
-    print(f"Solving time      : {metrics.solving_time:.6f} s")
-    print(f"Search nodes      : {metrics.search_nodes}")
-    print(f"Backtracks        : {metrics.backtracks}")
-    print(f"Conflicts         : {metrics.conflicts}")
-    print(f"Cells solved      : {metrics.cells_solved}")
-    print(f"Candidate reduct. : {metrics.candidate_reductions}")
-    print(f"Strategy switches : {metrics.strategy_switches}")
+    print(
+        f"Status            : "
+        f"{'SOLVED' if solved else 'FAILED'}"
+    )
 
-    # --------------------------------------------------------
-    # Strategy history
-    # --------------------------------------------------------
+    print(
+        f"Solving time      : "
+        f"{metrics.solving_time:.6f} s"
+    )
 
-    print("\nStrategy sequence:")
+    print(
+        f"Search nodes      : "
+        f"{metrics.search_nodes}"
+    )
+
+    print(
+        f"Backtracks        : "
+        f"{metrics.backtracks}"
+    )
+
+    print(
+        f"Conflicts         : "
+        f"{metrics.conflicts}"
+    )
+
+    print(
+        f"Cells solved      : "
+        f"{metrics.cells_solved}"
+    )
+
+    print(
+        f"Candidate reduct. : "
+        f"{metrics.candidate_reductions}"
+    )
+
+    print(
+        f"Strategy switches : "
+        f"{metrics.strategy_switches}"
+    )
+
+    print()
+    print("Strategy sequence:")
 
     if metrics.strategy_history:
-        print(" -> ".join(metrics.strategy_history))
+
+        print(
+            " -> ".join(
+                metrics.strategy_history
+            )
+        )
+
     else:
+
         print("No strategy recorded.")
 
-    # --------------------------------------------------------
-    # Final solution
-    # --------------------------------------------------------
-
-    print("\nFinal Solution:")
+    print()
+    print("Final Solution:")
     print_grid(sudoku)
 
-    # --------------------------------------------------------
-    # Presentation highlight
-    # --------------------------------------------------------
-
-    print("\n" + "=" * 72)
-    print("PRESENTATION HIGHLIGHT")
+    print()
+    print("=" * 72)
+    print("                    PRESENTATION HIGHLIGHT")
     print("=" * 72)
 
-    print("P7 demonstrates dynamic strategy switching:")
-    print("Min-Conflicts -> Constraint Propagation -> MRV + Backtracking")
+    print(
+        "P7 demonstrates dynamic strategy switching:"
+    )
 
-    print(f"Total strategy switches: {metrics.strategy_switches}")
-    print(f"Final result: {'Solved' if solved else 'Not solved'}")
+    if metrics.strategy_history:
+
+        print(
+            " -> ".join(
+                metrics.strategy_history
+            )
+        )
+
+    else:
+
+        print("No strategy switching occurred.")
+
+    print(
+        f"Total strategy switches: "
+        f"{metrics.strategy_switches}"
+    )
+
+    print(
+        f"Final result: "
+        f"{'Solved' if solved else 'Not solved'}"
+    )
 
     print("=" * 72)
+
+
+def show_main_menu():
+    """Display the main program menu."""
+
+    print()
+    print("=" * 72)
+    print("                    ADAPTIVE SUDOKU SOLVER")
+    print("=" * 72)
+
+    print()
+    print("1. Solve your own Sudoku")
+    print("2. Run Puzzle 7 presentation demo")
+    print("3. Run complete benchmark analysis")
+    print("4. Exit")
+
+    print()
+
+
+def main():
+    """Run the main Adaptive Sudoku Solver program."""
+
+    while True:
+
+        show_main_menu()
+
+        choice = input(
+            "Select an option (1-4): "
+        ).strip()
+
+        if choice == "1":
+
+            run_user_solver()
+
+        elif choice == "2":
+
+            run_puzzle_7_demo()
+
+        elif choice == "3":
+
+            run_benchmark_analysis()
+
+        elif choice == "4":
+
+            print()
+            print(
+                "Exiting Adaptive Sudoku Solver."
+            )
+            print()
+
+            break
+
+        else:
+
+            print()
+            print(
+                "Invalid option. "
+                "Please select 1, 2, 3, or 4."
+            )
 
 
 if __name__ == "__main__":
